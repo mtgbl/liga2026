@@ -1,0 +1,5 @@
+# generated files
+all_events.csv
+
+# dependencies
+node_modules
