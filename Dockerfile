@@ -9,7 +9,7 @@ COPY transform.sh .
 COPY example_data example_data
 
 RUN npm install && \
-    ./transform.sh
+    bash transform.sh
 
 FROM postgres:16
 
