@@ -99,3 +99,39 @@ FROM ranking r
          LEFT JOIN results r7 ON r.name::text = r7.name::text AND r7.event::text = 'draft7'::text
          LEFT JOIN results r8 ON r.name::text = r8.name::text AND r8.event::text = 'draft8'::text
 ORDER BY r.rank, r8.points DESC, r.name;
+
+
+-- effective ranking formatted for markdown table
+create view public.ranking_formatted(formatted) as
+select
+    '|' || lpad(rpad(rank::varchar, 3), 4) || '|'
+        || lpad(rpad(name::varchar, 24), 25) || '|'
+        || lpad(rpad(total_points::varchar, 4), 5) || '|'
+        || lpad(rpad(event_wins::varchar, 2), 3)  || '|'
+        || lpad(rpad(avg_omw::varchar, 5), 6) || '|'
+        || lpad(rpad(avg_gw::varchar, 5), 6) || '|'
+        || lpad(rpad(avg_ogw::varchar, 5), 6) || '|'
+as formatted
+from ranking;
+
+
+-- full ranking formatted for markdown table
+create view public.ranking_with_rounds_formatted(formatted) as
+select
+    '|' || lpad(rpad(rank::varchar, 3), 4) || '|'
+        || lpad(rpad(name::varchar, 24), 25) || '|'
+        || lpad(rpad(total_points::varchar, 4), 5) || '|'
+        || lpad(rpad(event_wins::varchar, 2), 3)  || '|'
+        || lpad(rpad(avg_omw::varchar, 5), 6) || '|'
+        || lpad(rpad(avg_gw::varchar, 5), 6) || '|'
+        || lpad(rpad(avg_ogw::varchar, 5), 6) || '|'
+        || lpad(rpad(d1::varchar, 3), 4) || '|'
+        || lpad(rpad(d2::varchar, 3), 4) || '|'
+        || lpad(rpad(d3::varchar, 3), 4) || '|'
+        || lpad(rpad(d4::varchar, 3), 4) || '|'
+        || lpad(rpad(d5::varchar, 3), 4) || '|'
+        || lpad(rpad(d6::varchar, 3), 4) || '|'
+        || lpad(rpad(d7::varchar, 3), 4) || '|'
+        || lpad(rpad(d8::varchar, 3), 4) || '|'
+as formatted
+from ranking_with_rounds;
