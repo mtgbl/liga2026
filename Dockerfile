@@ -7,7 +7,7 @@ COPY package-lock.json .
 COPY transform_eventlink.js .
 COPY transform.sh .
 copy name_replacements.csv .
-COPY example_data example_data
+COPY event_data event_data
 
 RUN npm install && \
     bash transform.sh

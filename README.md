@@ -1,7 +1,7 @@
 # Liga 2026 results
 
 ## Add event results
-Add the standings table from the event in eventlink as csv in `/example_data `.
+Add the standings table from the event in eventlink as csv in `/event_data `.
 The file name will be used as event name. For league purposes, name the event csv files `draft1.csv`, `draft2.csv` and so on.
 
 ## (Re-)Build database
