@@ -6,11 +6,16 @@ const process = require('process');
 async function main() {
     const { event, source } = parseParams();
 
+    // setup name replacer
+    const nameReplacementsPath = './name_replacements.csv';
+    const nameReplacements = await readCsv(nameReplacementsPath);
+    const nameReplacer = replaceName(nameReplacements);
+
     // read
-    const data = await readEventLinkCsv(source);
+    const data = await readCsv(source);
 
     // transform
-    const transfomer = transform(event);
+    const transfomer = transform(event, nameReplacer);
     const transformedData = data.map(transfomer);
     const csvOut = stringify(transformedData, stringifyOptions);
 
@@ -49,7 +54,7 @@ const parsersOptions = {
     skip_empty_lines: true,
 };
 
-async function readEventLinkCsv(path, options = parsersOptions){
+async function readCsv(path, options = parsersOptions){
     return new Promise(async (resolve, reject) => {
         const encoding = options.encoding || defaultOptions.encoding;
         const csvData = await readFile(path, encoding);
@@ -63,12 +68,12 @@ async function readEventLinkCsv(path, options = parsersOptions){
     });
 }
 
-function transform(event) {
+function transform(event, nameReplacer) {
     return (entry) => {
         let wld = entry['W/L/D'].split('/');
         return {
             event,
-            name: entry.Name,
+            name: nameReplacer(entry.Name),
             rank: entry.Rank,
             points: entry.Points,
             wins: wld[0],
@@ -77,6 +82,20 @@ function transform(event) {
             omw: (Number.parseFloat(entry['OMW%']) / 100).toFixed(3),
             gw: (Number.parseFloat(entry['GW%']) / 100).toFixed(3),
             ogw: (Number.parseFloat(entry['OGW%']) / 100).toFixed(3),
+        }
+    }
+}
+
+function replaceName(nameReplacements) {
+    const replacements = new Map();
+    for (const nameReplacement of nameReplacements) {
+        replacements.set(nameReplacement.name_from, nameReplacement.name_to);
+    }
+    return (nameToReplace) => {
+        if (replacements.has(nameToReplace)) {
+            return replacements.get(nameToReplace);
+        } else {
+            return nameToReplace;
         }
     }
 }
