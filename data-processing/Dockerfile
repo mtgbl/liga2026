@@ -2,11 +2,11 @@ FROM node:20 AS build
 
 WORKDIR /build
 
-COPY package.json .
-COPY package-lock.json .
-COPY transform_eventlink.js .
-COPY transform.sh .
-COPY name_replacements.csv .
+COPY data-processing/package.json .
+COPY data-processing/package-lock.json .
+COPY data-processing/transform_eventlink.js .
+COPY data-processing/transform.sh .
+COPY data-processing/name_replacements.csv .
 COPY event_data event_data
 
 RUN npm install && \
@@ -17,5 +17,5 @@ FROM postgres:16
 ENV POSTGRES_PASSWORD=test
 ENV POSTGRES_DB=liga2026
 
-COPY database_init.sql /docker-entrypoint-initdb.d/
+COPY data-processing/database_init.sql /docker-entrypoint-initdb.d/
 COPY --from=build /build/all_events.csv /docker-entrypoint-initdb.d/
