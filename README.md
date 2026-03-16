@@ -17,7 +17,7 @@ The calculation all happens in the database. All relevant code is in `database_i
 _Requires: Docker_
 
 ```sh
-docker build -t liga2026 . && docker run -it --rm -p 5432:5432 liga2026
+docker build -f data-processing/Dockerfile -t liga2026 . && docker run -it --rm -p 5432:5432 liga2026
 ```
 
 ## Show ranking
