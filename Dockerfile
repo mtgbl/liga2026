@@ -6,7 +6,7 @@ COPY package.json .
 COPY package-lock.json .
 COPY transform_eventlink.js .
 COPY transform.sh .
-copy name_replacements.csv .
+COPY name_replacements.csv .
 COPY event_data event_data
 
 RUN npm install && \
