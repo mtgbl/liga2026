@@ -4,13 +4,13 @@ WORKDIR /build
 
 COPY data-processing/package.json .
 COPY data-processing/package-lock.json .
+RUN npm install
+
 COPY data-processing/transform_eventlink.js .
 COPY data-processing/transform.sh .
 COPY data-processing/name_replacements.csv .
 COPY event_data event_data
-
-RUN npm install && \
-    bash transform.sh
+RUN bash transform.sh
 
 FROM postgres:16
 
