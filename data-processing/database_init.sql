@@ -26,12 +26,17 @@ COPY results FROM '/docker-entrypoint-initdb.d/all_events.csv' DELIMITER ',' CSV
 create view public.event_wins_by_most_points(name, wins) as
 WITH point_ranks AS (SELECT results.name,
                             rank() OVER (PARTITION BY results.event ORDER BY results.points DESC) AS rank
-                     FROM results)
-SELECT name,
-       count(*) AS wins
-FROM point_ranks
-WHERE rank = 1
-GROUP BY name;
+                     FROM results),
+    winners AS (SELECT name,
+                       count(*) AS wins
+                FROM point_ranks
+                WHERE rank = 1
+                GROUP BY name),
+    players AS (SELECT DISTINCT name from results)
+SELECT
+    p.name AS name,
+    coalesce(w.wins, 0) AS wins
+FROM players p LEFT JOIN winners w ON p.name = w.name;
 
 
 -- this view calculates a ranking using total_points and average (omw, gw, ogw) only using the 6 best results
@@ -62,7 +67,7 @@ SELECT rank()
        OVER (ORDER BY pr.total_points DESC, ew.wins DESC, pr.avg_omw DESC, pr.avg_gw DESC, pr.avg_ogw DESC) AS rank,
        pr.name,
        pr.total_points,
-       COALESCE(ew.wins, 0::bigint)                                                                         AS event_wins,
+       ew.wins AS event_wins,
        pr.avg_omw,
        pr.avg_gw,
        pr.avg_ogw
