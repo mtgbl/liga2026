@@ -3,3 +3,6 @@ all_events.csv
 
 # dependencies
 node_modules
+
+# IDE crap
+.idea
